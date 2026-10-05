@@ -7,6 +7,9 @@ import { business, services, testimonials, projects, faq, shareWithRequest, askW
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const SITE_URL = (process.env.SITE_URL || '').replace(/\/$/, '');
+// BASE_PATH לאחסון בתת-נתיב (למשל GitHub Pages: /vol). ריק = שורש הדומיין.
+const BASE = (process.env.BASE_PATH || '').replace(/\/$/, '');
+const rebase = (html) => (BASE ? html.replace(/(href|src)="\/(?!\/)/g, `$1="${BASE}/`) : html);
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const write = (path, content) => { const f = join(dist, path); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, content); };
@@ -445,10 +448,10 @@ rmSync(dist, { recursive: true, force: true });
 mkdirSync(dist, { recursive: true });
 for (const p of pages) {
   const out = p.path === '/' ? 'index.html' : join(p.path, 'index.html');
-  write(out, layout(p));
+  write(out, rebase(layout(p)));
 }
-write('404.html', layout({ path: '/404.html', title: 'העמוד לא נמצא', desc: 'העמוד שחיפשתם לא נמצא באתר Sharp N Shine. אפשר לחזור לעמוד הבית או ליצור קשר.', noindex: true,
-  body: `${pageHero([], 'העמוד לא נמצא', 'ייתכן שהקישור שגוי או שהעמוד הוסר.')}<section class="block"><div class="wrap"><div class="btn-row"><a class="btn btn-dark" href="/">לעמוד הבית</a><a class="btn btn-outline" href="/services/">לשירותים</a><a class="btn btn-outline" href="/contact/">יצירת קשר</a></div></div></section>` }));
+write('404.html', rebase(layout({ path: '/404.html', title: 'העמוד לא נמצא', desc: 'העמוד שחיפשתם לא נמצא באתר Sharp N Shine. אפשר לחזור לעמוד הבית או ליצור קשר.', noindex: true,
+  body: `${pageHero([], 'העמוד לא נמצא', 'ייתכן שהקישור שגוי או שהעמוד הוסר.')}<section class="block"><div class="wrap"><div class="btn-row"><a class="btn btn-dark" href="/">לעמוד הבית</a><a class="btn btn-outline" href="/services/">לשירותים</a><a class="btn btn-outline" href="/contact/">יצירת קשר</a></div></div></section>` })));
 copyFileSync(join(root, 'src/styles.css'), join(dist, 'styles.css'));
 copyFileSync(join(root, 'src/main.js'), join(dist, 'main.js'));
 if (existsSync(join(root, 'assets'))) {
