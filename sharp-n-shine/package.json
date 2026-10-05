@@ -1,0 +1,13 @@
+{
+  "name": "sharp-n-shine-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "אתר סדנת הדיטיילינג Sharp N Shine – מחולל סטטי ללא תלויות",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/build.mjs && node scripts/serve.mjs",
+    "serve": "node scripts/serve.mjs",
+    "test": "node scripts/build.mjs && node tests/static.mjs && node tests/browser.mjs"
+  }
+}
